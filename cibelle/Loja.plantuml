@@ -1,0 +1,65 @@
+@startuml loja
+class Marca {
+  + Id: string
+  + Nome: string
+  + Descricao: string
+  + Produtos: ICollection<Produto>
+}
+
+class Produto {
+  + Id: string
+  + Nome: string
+  + Quantidade: int
+  + Preco: double
+  + Itens: List<Item>
+}
+
+class Item {
+  + Id: string
+  + Preco: double
+  + Quantidade: int
+  + Percentual: int
+  + NotasDeVenda: List<NotaDeVenda>
+}
+
+class NotaDeVenda {
+  + Id: string
+  + Data: DateTime
+  + Tipo: bool
+  + Clientes: List<Cliente>
+  + Vendedores: List<Vendedor>
+  + Transportadoras: List<Transportadora>
+}
+
+class Pagamento {
+  + Id: string
+  + Valor: double
+  + Pago: bool
+  + DataLimite: DateTime
+}
+
+class Cliente {
+  + Id: string
+  + Nome: string
+  + NotasDeVenda: List<NotaDeVenda>
+}
+
+class Vendedor {
+  + Id: string
+  + Nome: string
+  + NotasDeVenda: List<NotaDeVenda>
+}
+
+class Transportadora {
+  + Id: string
+  + Nome: string
+}
+
+NotaDeVenda "1" -- "0..*" Cliente
+NotaDeVenda "1" -- "0..*" Vendedor
+NotaDeVenda "0..*" -- "0..*" Transportadora
+Produto "1" -- "0..*" Marca
+Item "0..*" -- "0..*" NotaDeVenda
+Cliente "0..*" -- "1" NotaDeVenda
+Vendedor "0..*" -- "1" NotaDeVenda
+@enduml
