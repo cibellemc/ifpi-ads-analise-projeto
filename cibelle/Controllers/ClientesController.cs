@@ -26,7 +26,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Clientes/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -66,7 +66,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Clientes/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -86,7 +86,7 @@ namespace cibelle.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Nome")] Cliente cliente)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] Cliente cliente)
         {
             if (id != cliente.Id)
             {
@@ -117,7 +117,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Clientes/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -137,7 +137,7 @@ namespace cibelle.Controllers
         // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
             _context.Clientes.Remove(cliente);
@@ -145,7 +145,7 @@ namespace cibelle.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ClienteExists(string id)
+        private bool ClienteExists(int id)
         {
             return _context.Clientes.Any(e => e.Id == id);
         }

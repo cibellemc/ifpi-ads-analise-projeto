@@ -4,7 +4,7 @@
 
 namespace cibelle.Migrations
 {
-    public partial class AddMarcaEmProduto : Migration
+    public partial class AddMarcaNaViewProduto : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

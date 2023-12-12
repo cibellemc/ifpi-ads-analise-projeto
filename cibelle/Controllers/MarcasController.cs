@@ -26,7 +26,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Marcas/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -66,7 +66,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Marcas/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -86,7 +86,7 @@ namespace cibelle.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Nome,Descricao")] Marca marca)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Descricao")] Marca marca)
         {
             if (id != marca.Id)
             {
@@ -117,7 +117,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Marcas/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -137,7 +137,7 @@ namespace cibelle.Controllers
         // POST: Marcas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var marca = await _context.Marcas.FindAsync(id);
             _context.Marcas.Remove(marca);
@@ -145,7 +145,7 @@ namespace cibelle.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MarcaExists(string id)
+        private bool MarcaExists(int id)
         {
             return _context.Marcas.Any(e => e.Id == id);
         }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace cibelle.Migrations
 {
-    public partial class MigracaoInicial : Migration
+    public partial class MudandoIdParaInt : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,8 @@ namespace cibelle.Migrations
                 name: "Clientes",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -25,7 +26,8 @@ namespace cibelle.Migrations
                 name: "Marcas",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Descricao = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -38,7 +40,8 @@ namespace cibelle.Migrations
                 name: "TiposDePagamento",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     NomeDoCobrado = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InformacoesAdicionais = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -56,7 +59,8 @@ namespace cibelle.Migrations
                 name: "Transportadoras",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -68,7 +72,8 @@ namespace cibelle.Migrations
                 name: "Vendedores",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -80,11 +85,12 @@ namespace cibelle.Migrations
                 name: "Produtos",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Quantidade = table.Column<int>(type: "int", nullable: false),
                     Preco = table.Column<double>(type: "float", nullable: false),
-                    MarcaId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    MarcaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -100,11 +106,12 @@ namespace cibelle.Migrations
                 name: "Itens",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Preco = table.Column<double>(type: "float", nullable: false),
                     Quantidade = table.Column<int>(type: "int", nullable: false),
                     Percentual = table.Column<int>(type: "int", nullable: false),
-                    ProdutoId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    ProdutoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -120,14 +127,15 @@ namespace cibelle.Migrations
                 name: "NotasDeVenda",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Data = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Tipo = table.Column<bool>(type: "bit", nullable: false),
-                    ClienteId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    VendedorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    TransportadoraId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    TipoDePagamentoId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    ClienteId = table.Column<int>(type: "int", nullable: true),
+                    VendedorId = table.Column<int>(type: "int", nullable: true),
+                    TransportadoraId = table.Column<int>(type: "int", nullable: true),
+                    TipoDePagamentoId = table.Column<int>(type: "int", nullable: true),
+                    ItemId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -163,11 +171,12 @@ namespace cibelle.Migrations
                 name: "Pagamentos",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Valor = table.Column<double>(type: "float", nullable: false),
                     Pago = table.Column<bool>(type: "bit", nullable: false),
                     DataLimite = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NotaDeVendaId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    NotaDeVendaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

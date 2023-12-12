@@ -1,15 +1,18 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace cibelle.Models
 {
     public class Item
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         [Display(Name = "Preço")]
         public double Preco { get; set; }
         public int Quantidade { get; set; }
         public int Percentual { get; set; }
-        public List<NotaDeVenda> NotasDeVenda { get; set; }
-
+        public int IdNotaDeVenda { get; set; }
+        public NotaDeVenda NotaDeVenda { get; set; }
+        public int IdProduto { get; set; }
+        public Produto Produto { get; set; }
     }
 }

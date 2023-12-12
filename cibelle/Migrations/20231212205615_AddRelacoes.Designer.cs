@@ -12,8 +12,8 @@ using cibelle.Context;
 namespace cibelle.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    [Migration("20231211005609_MigracaoInicial")]
-    partial class MigracaoInicial
+    [Migration("20231212205615_AddRelacoes")]
+    partial class AddRelacoes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,8 +26,11 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Cliente", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Nome")
                         .HasColumnType("nvarchar(max)");
@@ -39,8 +42,20 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Item", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("IdNotaDeVenda")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdProduto")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NotaDeVendaId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Percentual")
                         .HasColumnType("int");
@@ -48,13 +63,15 @@ namespace cibelle.Migrations
                     b.Property<double>("Preco")
                         .HasColumnType("float");
 
-                    b.Property<string>("ProdutoId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("ProdutoId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Quantidade")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NotaDeVendaId");
 
                     b.HasIndex("ProdutoId");
 
@@ -63,8 +80,11 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Marca", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Descricao")
                         .HasColumnType("nvarchar(max)");
@@ -79,35 +99,33 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.NotaDeVenda", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("ClienteId")
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("ClienteId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ItemId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<bool>("Tipo")
                         .HasColumnType("bit");
 
-                    b.Property<string>("TipoDePagamentoId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("TipoDePagamentoId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("TransportadoraId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("TransportadoraId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("VendedorId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("VendedorId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
-
-                    b.HasIndex("ItemId");
 
                     b.HasIndex("TipoDePagamentoId");
 
@@ -120,14 +138,20 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Pagamento", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("DataLimite")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NotaDeVendaId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("IdNotaDeVenda")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NotaDeVendaId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Pago")
                         .HasColumnType("bit");
@@ -144,11 +168,17 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Produto", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("MarcaId")
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("IdMarca")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MarcaId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .HasColumnType("nvarchar(max)");
@@ -168,8 +198,11 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.TipoDePagamento", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -190,8 +223,11 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Transportadora", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Nome")
                         .HasColumnType("nvarchar(max)");
@@ -203,8 +239,11 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Vendedor", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Nome")
                         .HasColumnType("nvarchar(max)");
@@ -242,9 +281,17 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Item", b =>
                 {
-                    b.HasOne("cibelle.Models.Produto", null)
+                    b.HasOne("cibelle.Models.NotaDeVenda", "NotaDeVenda")
+                        .WithMany("Itens")
+                        .HasForeignKey("NotaDeVendaId");
+
+                    b.HasOne("cibelle.Models.Produto", "Produto")
                         .WithMany("Itens")
                         .HasForeignKey("ProdutoId");
+
+                    b.Navigation("NotaDeVenda");
+
+                    b.Navigation("Produto");
                 });
 
             modelBuilder.Entity("cibelle.Models.NotaDeVenda", b =>
@@ -252,10 +299,6 @@ namespace cibelle.Migrations
                     b.HasOne("cibelle.Models.Cliente", "Cliente")
                         .WithMany("NotasDeVenda")
                         .HasForeignKey("ClienteId");
-
-                    b.HasOne("cibelle.Models.Item", null)
-                        .WithMany("NotasDeVenda")
-                        .HasForeignKey("ItemId");
 
                     b.HasOne("cibelle.Models.TipoDePagamento", "TipoDePagamento")
                         .WithMany("NotasDeVenda")
@@ -289,17 +332,14 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Produto", b =>
                 {
-                    b.HasOne("cibelle.Models.Marca", null)
+                    b.HasOne("cibelle.Models.Marca", "Marca")
                         .WithMany("Produtos")
                         .HasForeignKey("MarcaId");
+
+                    b.Navigation("Marca");
                 });
 
             modelBuilder.Entity("cibelle.Models.Cliente", b =>
-                {
-                    b.Navigation("NotasDeVenda");
-                });
-
-            modelBuilder.Entity("cibelle.Models.Item", b =>
                 {
                     b.Navigation("NotasDeVenda");
                 });
@@ -311,6 +351,8 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.NotaDeVenda", b =>
                 {
+                    b.Navigation("Itens");
+
                     b.Navigation("Pagamentos");
                 });
 

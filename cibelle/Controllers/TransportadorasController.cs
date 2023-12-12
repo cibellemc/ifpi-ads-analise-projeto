@@ -26,7 +26,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Transportadoras/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -66,7 +66,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Transportadoras/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -86,7 +86,7 @@ namespace cibelle.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Nome")] Transportadora transportadora)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] Transportadora transportadora)
         {
             if (id != transportadora.Id)
             {
@@ -117,7 +117,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Transportadoras/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -137,7 +137,7 @@ namespace cibelle.Controllers
         // POST: Transportadoras/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var transportadora = await _context.Transportadoras.FindAsync(id);
             _context.Transportadoras.Remove(transportadora);
@@ -145,7 +145,7 @@ namespace cibelle.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TransportadoraExists(string id)
+        private bool TransportadoraExists(int id)
         {
             return _context.Transportadoras.Any(e => e.Id == id);
         }

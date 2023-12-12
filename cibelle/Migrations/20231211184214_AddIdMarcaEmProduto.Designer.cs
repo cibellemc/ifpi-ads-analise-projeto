@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using cibelle.Context;
 
@@ -11,9 +12,10 @@ using cibelle.Context;
 namespace cibelle.Migrations
 {
     [DbContext(typeof(LojaContext))]
-    partial class LojaContextModelSnapshot : ModelSnapshot
+    [Migration("20231211184214_AddIdMarcaEmProduto")]
+    partial class AddIdMarcaEmProduto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,15 +48,6 @@ namespace cibelle.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("IdNotaDeVenda")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdProduto")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("NotaDeVendaId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Percentual")
                         .HasColumnType("int");
 
@@ -68,8 +61,6 @@ namespace cibelle.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NotaDeVendaId");
 
                     b.HasIndex("ProdutoId");
 
@@ -109,16 +100,7 @@ namespace cibelle.Migrations
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("IdCliente")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdTipoPagamento")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdTransportadora")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdVendedor")
+                    b.Property<int?>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Tipo")
@@ -136,6 +118,8 @@ namespace cibelle.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
+
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("TipoDePagamentoId");
 
@@ -156,9 +140,6 @@ namespace cibelle.Migrations
 
                     b.Property<DateTime>("DataLimite")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("IdNotaDeVenda")
-                        .HasColumnType("int");
 
                     b.Property<int?>("NotaDeVendaId")
                         .HasColumnType("int");
@@ -291,17 +272,9 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.Item", b =>
                 {
-                    b.HasOne("cibelle.Models.NotaDeVenda", "NotaDeVenda")
-                        .WithMany("Itens")
-                        .HasForeignKey("NotaDeVendaId");
-
-                    b.HasOne("cibelle.Models.Produto", "Produto")
+                    b.HasOne("cibelle.Models.Produto", null)
                         .WithMany("Itens")
                         .HasForeignKey("ProdutoId");
-
-                    b.Navigation("NotaDeVenda");
-
-                    b.Navigation("Produto");
                 });
 
             modelBuilder.Entity("cibelle.Models.NotaDeVenda", b =>
@@ -309,6 +282,10 @@ namespace cibelle.Migrations
                     b.HasOne("cibelle.Models.Cliente", "Cliente")
                         .WithMany("NotasDeVenda")
                         .HasForeignKey("ClienteId");
+
+                    b.HasOne("cibelle.Models.Item", null)
+                        .WithMany("NotasDeVenda")
+                        .HasForeignKey("ItemId");
 
                     b.HasOne("cibelle.Models.TipoDePagamento", "TipoDePagamento")
                         .WithMany("NotasDeVenda")
@@ -354,6 +331,11 @@ namespace cibelle.Migrations
                     b.Navigation("NotasDeVenda");
                 });
 
+            modelBuilder.Entity("cibelle.Models.Item", b =>
+                {
+                    b.Navigation("NotasDeVenda");
+                });
+
             modelBuilder.Entity("cibelle.Models.Marca", b =>
                 {
                     b.Navigation("Produtos");
@@ -361,8 +343,6 @@ namespace cibelle.Migrations
 
             modelBuilder.Entity("cibelle.Models.NotaDeVenda", b =>
                 {
-                    b.Navigation("Itens");
-
                     b.Navigation("Pagamentos");
                 });
 

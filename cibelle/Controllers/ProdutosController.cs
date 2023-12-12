@@ -19,14 +19,17 @@ namespace cibelle.Controllers
             _context = context;
         }
 
-        // GET: Produtos
+
+        // GET: Produtos/Index
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Produtos.ToListAsync());
+            // Carregar produtos com suas marcas associadas
+            var produtosComMarca = await _context.Produtos.Include(p => p.Marca).ToListAsync();
+            return View(produtosComMarca);
         }
 
         // GET: Produtos/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -46,27 +49,43 @@ namespace cibelle.Controllers
         // GET: Produtos/Create
         public IActionResult Create()
         {
+            ViewBag.Marcas = new SelectList(_context.Marcas, "Id", "Nome");
             return View();
         }
 
         // POST: Produtos/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Produtos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Quantidade,Preco")] Produto produto)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Quantidade,Preco,IdMarca")] Produto produto)
         {
             if (ModelState.IsValid)
             {
+                // Encontrar a marca selecionada no banco de dados
+                var marcaSelecionada = await _context.Marcas.FindAsync(produto.IdMarca);
+
+                // Associar a marca ao produto
+                produto.Marca = marcaSelecionada;
+
+                // Adicionar o produto ao contexto
                 _context.Add(produto);
+
+                // Salvar as alterações no banco de dados
                 await _context.SaveChangesAsync();
+
+                // Redirecionar para a página Index
                 return RedirectToAction(nameof(Index));
             }
+
+            // Se o modelo não for válido, recarregar as marcas e retornar à página Create
+            ViewBag.Marcas = new SelectList(_context.Marcas, "Id", "Nome");
             return View(produto);
         }
 
         // GET: Produtos/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -86,7 +105,7 @@ namespace cibelle.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Nome,Quantidade,Preco")] Produto produto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Quantidade,Preco")] Produto produto)
         {
             if (id != produto.Id)
             {
@@ -117,7 +136,7 @@ namespace cibelle.Controllers
         }
 
         // GET: Produtos/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -137,7 +156,7 @@ namespace cibelle.Controllers
         // POST: Produtos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var produto = await _context.Produtos.FindAsync(id);
             _context.Produtos.Remove(produto);
@@ -145,7 +164,7 @@ namespace cibelle.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProdutoExists(string id)
+        private bool ProdutoExists(int id)
         {
             return _context.Produtos.Any(e => e.Id == id);
         }

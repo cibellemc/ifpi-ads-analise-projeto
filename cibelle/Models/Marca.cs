@@ -4,7 +4,7 @@ namespace cibelle.Models
 {
     public class Marca
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Nome { get; set; }
         [Display(Name = "Descrição")]
         public string Descricao { get; set; }
