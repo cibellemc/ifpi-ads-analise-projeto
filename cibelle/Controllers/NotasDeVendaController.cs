@@ -29,8 +29,7 @@ namespace cibelle.Controllers
 
             return View(notasComRelacionamentos);
         }
-
-
+        
         // GET: NotasDeVenda/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -67,23 +66,29 @@ namespace cibelle.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Recupere os objetos vendedor, cliente e transportadora com base nos IDs
+                // recupera os objetos vendedor, cliente e transportadora com base nos IDs
                 notaDeVenda.Cliente = await _context.Clientes.FindAsync(notaDeVenda.IdCliente);
                 notaDeVenda.Vendedor = await _context.Vendedores.FindAsync(notaDeVenda.IdVendedor);
                 notaDeVenda.Transportadora = await _context.Transportadoras.FindAsync(notaDeVenda.IdTransportadora);
 
-                // Alteração: Carregue os produtos associados aos IDs fornecidos
+                // carrega os produtos associados aos IDs fornecidos
                 var produtosSelecionados = await _context.Produtos.Where(p => notaDeVenda.IdsItems.Contains(p.Id)).ToListAsync();
 
-                // Associe produtos à nota de venda criando os itens
+                // associa produtos à nota de venda criando os itens
                 notaDeVenda.Itens = produtosSelecionados.Select(produto => new Item
                 {
                     Produto = produto,
                     Preco = produto.Preco,
-                    // Adicione outras propriedades do Item, se necessário
+                    // outras propriedades do Item
                 }).ToList();
 
-                // Adicione a notaDeVenda ao contexto
+                foreach (var produto in produtosSelecionados)
+                {
+                    // Suponha que há uma propriedade "Quantidade" no seu modelo de Produto
+                    produto.Quantidade--;  // Ajuste conforme sua estrutura
+                }
+
+                // adiciona a notaDeVenda ao contexto
                 _context.Add(notaDeVenda);
                 await _context.SaveChangesAsync();
 
@@ -156,7 +161,9 @@ namespace cibelle.Controllers
             }
 
             var notaDeVenda = await _context.NotasDeVenda
+                .Include(n => n.Itens)  // incluir os itens para desassociação
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (notaDeVenda == null)
             {
                 return NotFound();
@@ -170,11 +177,29 @@ namespace cibelle.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var notaDeVenda = await _context.NotasDeVenda.FindAsync(id);
+            var notaDeVenda = await _context.NotasDeVenda
+                .Include(n => n.Itens) .ThenInclude(i => i.Produto) // incluir os itens para desassociação
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (notaDeVenda == null)
+            {
+                return NotFound();
+            }
+
+            // desassocia manualmente os itens
+            foreach (var item in notaDeVenda.Itens)
+            {
+                item.Produto.Quantidade++;
+                item.IdNotaDeVenda = 0;
+            }
+
+            // exclui a nota de venda
             _context.NotasDeVenda.Remove(notaDeVenda);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool NotaDeVendaExists(int id)
         {
