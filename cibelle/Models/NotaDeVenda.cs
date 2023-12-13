@@ -17,7 +17,27 @@ namespace cibelle.Models
         public int IdTipoPagamento { get; set; }
         public TipoDePagamento TipoDePagamento { get; set; }
         [NotMapped]
-        public List<int> IdsItems { get; set; }
+        public List<int> IdsItems { get; set; } = new List<int>();
         public List<Item> Itens { get; set; } // Relação com Item
+
+        public void AssociarProdutos(List<Produto> produtos/*, List<int> quantidades*/)
+        {
+            for (int i = 0; i < produtos.Count; i++)
+            {
+                var produto = produtos[i];
+                // var quantidade = quantidades[i];
+
+                var item = new Item
+                {
+                    Produto = produto,
+                    Preco = produto.Preco,
+                    // Quantidade = quantidade,
+                    // Percentual = 0
+                };
+
+                Itens.Add(item);
+            }
+        }
     }
 }
+

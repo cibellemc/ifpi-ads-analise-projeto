@@ -53,6 +53,7 @@ namespace cibelle.Controllers
             ViewBag.Vendedores = new SelectList(_context.Vendedores, "Id", "Nome");
             ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
             ViewBag.Transportadoras = new SelectList(_context.Transportadoras, "Id", "Nome");
+            ViewBag.Produtos = new SelectList(_context.Produtos, "Id", "Nome");
 
             return View();
         }
@@ -71,6 +72,11 @@ namespace cibelle.Controllers
                 notaDeVenda.Vendedor = await _context.Vendedores.FindAsync(notaDeVenda.IdVendedor);
                 notaDeVenda.Transportadora = await _context.Transportadoras.FindAsync(notaDeVenda.IdTransportadora);
 
+                // Alteração: Carregue os produtos associados aos IDs fornecidos
+                var produtosSelecionados = await _context.Produtos.Where(p => notaDeVenda.IdsItems.Contains(p.Id)).ToListAsync();
+
+                // Alteração: Associe produtos à nota de venda com quantidades
+                notaDeVenda.AssociarProdutos(produtosSelecionados/*, quantidades*/);
                 // Adicione a notaDeVenda ao contexto
                 _context.Add(notaDeVenda);
                 await _context.SaveChangesAsync();
