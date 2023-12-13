@@ -23,6 +23,8 @@ namespace cibelle.Controllers
                 .Include(n => n.Cliente)
                 .Include(n => n.Vendedor)
                 .Include(n => n.Transportadora)
+                 .Include(n => n.Itens)
+                    .ThenInclude(i => i.Produto)
                 .ToListAsync();
 
             return View(notasComRelacionamentos);
@@ -59,11 +61,9 @@ namespace cibelle.Controllers
         }
 
         // POST: NotasDeVenda/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Data,Tipo,IdCliente,IdVendedor,IdTransportadora")] NotaDeVenda notaDeVenda)
+        public async Task<IActionResult> Create([Bind("Id,Data,Tipo,IdCliente,IdVendedor,IdTransportadora,IdsItems")] NotaDeVenda notaDeVenda)
         {
             if (ModelState.IsValid)
             {
@@ -75,8 +75,14 @@ namespace cibelle.Controllers
                 // Alteração: Carregue os produtos associados aos IDs fornecidos
                 var produtosSelecionados = await _context.Produtos.Where(p => notaDeVenda.IdsItems.Contains(p.Id)).ToListAsync();
 
-                // Alteração: Associe produtos à nota de venda com quantidades
-                notaDeVenda.AssociarProdutos(produtosSelecionados/*, quantidades*/);
+                // Associe produtos à nota de venda criando os itens
+                notaDeVenda.Itens = produtosSelecionados.Select(produto => new Item
+                {
+                    Produto = produto,
+                    Preco = produto.Preco,
+                    // Adicione outras propriedades do Item, se necessário
+                }).ToList();
+
                 // Adicione a notaDeVenda ao contexto
                 _context.Add(notaDeVenda);
                 await _context.SaveChangesAsync();
@@ -87,10 +93,10 @@ namespace cibelle.Controllers
             ViewBag.Vendedores = new SelectList(_context.Vendedores, "Id", "Nome");
             ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
             ViewBag.Transportadoras = new SelectList(_context.Transportadoras, "Id", "Nome");
+            ViewBag.Produtos = new SelectList(_context.Produtos, "Id", "Nome");
 
             return View(notaDeVenda);
         }
-
 
         // GET: NotasDeVenda/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -109,8 +115,6 @@ namespace cibelle.Controllers
         }
 
         // POST: NotasDeVenda/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Data,Tipo")] NotaDeVenda notaDeVenda)
