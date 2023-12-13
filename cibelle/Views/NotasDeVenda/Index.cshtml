@@ -35,6 +35,7 @@
     </thead>
     <tbody>
         @foreach (var item in Model)
+
         {
             <tr>
                 <td>
@@ -49,17 +50,27 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Vendedor.Nome)
                 </td>
-                @* <td>
-                    @foreach (var itemProduto in item.Itens)
+                <td>
+                    @if (item.Itens != null && item.Itens.Any())
                     {
-                        @Html.DisplayFor(modelItem => itemProduto.Produto.Nome)
-                        <br />
+
+                        foreach (var i in item.Itens)
+
+                        {
+                            <span>@i.Produto.Nome</span>
+                            <br />
+                        }
                     }
-                </td> *@
-                    <td></td>
+                    else
+                    {
+                        <span>Nenhum produto associado</span>
+                    }
+                </td>
+
                 <td>
                     @Html.DisplayFor(modelItem => item.Transportadora.Nome)
                 </td>
+                <td></td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
