@@ -29,7 +29,7 @@ namespace cibelle.Controllers
 
             return View(notasComRelacionamentos);
         }
-        
+
         // GET: NotasDeVenda/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -92,12 +92,26 @@ namespace cibelle.Controllers
                 _context.Add(notaDeVenda);
                 await _context.SaveChangesAsync();
 
+                // cria um pagamento associado à nota
+                var pagamento = new Pagamento
+                {
+                    Valor = notaDeVenda.CalcularValorTotal(),  // calcula o valor total da nota
+                    Pago = false,
+                    DataLimite = DateTime.Now.AddDays(30),  // ajuste conforme necessário
+                    IdNotaDeVenda = notaDeVenda.Id
+                };
+
+                // adiciona o pagamento ao contexto
+                _context.Add(pagamento);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             ViewBag.Vendedores = new SelectList(_context.Vendedores, "Id", "Nome");
             ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
             ViewBag.Transportadoras = new SelectList(_context.Transportadoras, "Id", "Nome");
+            ViewBag.TiposDePagamento = new SelectList(_context.TiposDePagamento, "Id", "Nome");
             ViewBag.Produtos = new SelectList(_context.Produtos, "Id", "Nome");
 
             return View(notaDeVenda);
@@ -178,7 +192,8 @@ namespace cibelle.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var notaDeVenda = await _context.NotasDeVenda
-                .Include(n => n.Itens) .ThenInclude(i => i.Produto) // incluir os itens para desassociação
+                .Include(n => n.Pagamentos) 
+                .Include(n => n.Itens).ThenInclude(i => i.Produto) // incluir os itens para desassociação
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (notaDeVenda == null)
@@ -192,6 +207,8 @@ namespace cibelle.Controllers
                 item.Produto.Quantidade++;
                 item.IdNotaDeVenda = 0;
             }
+            
+            _context.Pagamentos.RemoveRange(notaDeVenda.Pagamentos);
 
             // exclui a nota de venda
             _context.NotasDeVenda.Remove(notaDeVenda);

@@ -17,6 +17,5 @@ namespace cibelle.Context
         public DbSet<TipoDePagamento> TiposDePagamento { get; set; }
         public DbSet<PagamentoComCartao> PagamentosComCartao { get; set; }
         public DbSet<PagamentoComCheque> PagamentosComCheque { get; set; }
-
     }
 }

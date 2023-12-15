@@ -7,7 +7,7 @@ namespace cibelle.Models
     {
         public int Id { get; set; }
         [Display(Name = "Preço")]
-        public double Preco { get; set; }
+        public decimal Preco { get; set; }
         public int Quantidade { get; set; }
         public int Percentual { get; set; }
         public int IdNotaDeVenda { get; set; }

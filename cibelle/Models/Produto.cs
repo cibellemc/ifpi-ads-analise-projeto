@@ -8,7 +8,7 @@ namespace cibelle.Models
         public string Nome { get; set; }
         public int Quantidade { get; set; }
         [Display(Name = "Preço")]
-        public double Preco { get; set; }
+        public decimal Preco { get; set; }
         public List<Item> Itens { get; set; }   
         public int IdMarca { get; set; }
         public Marca Marca { get; set; }

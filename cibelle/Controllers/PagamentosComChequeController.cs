@@ -10,25 +10,22 @@ using cibelle.Models;
 
 namespace cibelle.Controllers
 {
-    public class ProdutosController : Controller
+    public class PagamentosComChequeController : Controller
     {
         private readonly LojaContext _context;
 
-        public ProdutosController(LojaContext context)
+        public PagamentosComChequeController(LojaContext context)
         {
             _context = context;
         }
 
-
-        // GET: Produtos/Index
+        // GET: PagamentosComCheque
         public async Task<IActionResult> Index()
         {
-            // Carregar produtos com suas marcas associadas
-            var produtosComMarca = await _context.Produtos.Include(p => p.Marca).ToListAsync();
-            return View(produtosComMarca);
+            return View(await _context.PagamentosComCheque.ToListAsync());
         }
 
-        // GET: Produtos/Details/5
+        // GET: PagamentosComCheque/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,55 +33,39 @@ namespace cibelle.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos
+            var pagamentoComCheque = await _context.PagamentosComCheque
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (produto == null)
+            if (pagamentoComCheque == null)
             {
                 return NotFound();
             }
 
-            return View(produto);
+            return View(pagamentoComCheque);
         }
 
-        // GET: Produtos/Create
+        // GET: PagamentosComCheque/Create
         public IActionResult Create()
         {
-            ViewBag.Marcas = new SelectList(_context.Marcas, "Id", "Nome");
             return View();
         }
 
-        // POST: Produtos/Create
+        // POST: PagamentosComCheque/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // POST: Produtos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Quantidade,Preco,IdMarca")] Produto produto)
+        public async Task<IActionResult> Create([Bind("NomeDoBanco,Banco,Id,NomeDoCobrado,InformacoesAdicionais")] PagamentoComCheque pagamentoComCheque)
         {
             if (ModelState.IsValid)
             {
-                // Encontrar a marca selecionada no banco de dados
-                var marcaSelecionada = await _context.Marcas.FindAsync(produto.IdMarca);
-
-                // Associar a marca ao produto
-                produto.Marca = marcaSelecionada;
-
-                // Adicionar o produto ao contexto
-                _context.Add(produto);
-
-                // Salvar as alterações no banco de dados
+                _context.Add(pagamentoComCheque);
                 await _context.SaveChangesAsync();
-
-                // Redirecionar para a página Index
                 return RedirectToAction(nameof(Index));
             }
-
-            // Se o modelo não for válido, recarregar as marcas e retornar à página Create
-            ViewBag.Marcas = new SelectList(_context.Marcas, "Id", "Nome");
-            return View(produto);
+            return View(pagamentoComCheque);
         }
 
-        // GET: Produtos/Edit/5
+        // GET: PagamentosComCheque/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,22 +73,22 @@ namespace cibelle.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos.FindAsync(id);
-            if (produto == null)
+            var pagamentoComCheque = await _context.PagamentosComCheque.FindAsync(id);
+            if (pagamentoComCheque == null)
             {
                 return NotFound();
             }
-            return View(produto);
+            return View(pagamentoComCheque);
         }
 
-        // POST: Produtos/Edit/5
+        // POST: PagamentosComCheque/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Quantidade,Preco")] Produto produto)
+        public async Task<IActionResult> Edit(int id, [Bind("NomeDoBanco,Banco,Id,NomeDoCobrado,InformacoesAdicionais")] PagamentoComCheque pagamentoComCheque)
         {
-            if (id != produto.Id)
+            if (id != pagamentoComCheque.Id)
             {
                 return NotFound();
             }
@@ -116,12 +97,12 @@ namespace cibelle.Controllers
             {
                 try
                 {
-                    _context.Update(produto);
+                    _context.Update(pagamentoComCheque);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProdutoExists(produto.Id))
+                    if (!PagamentoComChequeExists(pagamentoComCheque.Id))
                     {
                         return NotFound();
                     }
@@ -132,10 +113,10 @@ namespace cibelle.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(produto);
+            return View(pagamentoComCheque);
         }
 
-        // GET: Produtos/Delete/5
+        // GET: PagamentosComCheque/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -143,46 +124,30 @@ namespace cibelle.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos
+            var pagamentoComCheque = await _context.PagamentosComCheque
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (produto == null)
+            if (pagamentoComCheque == null)
             {
                 return NotFound();
             }
 
-            return View(produto);
+            return View(pagamentoComCheque);
         }
 
+        // POST: PagamentosComCheque/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var produto = await _context.Produtos
-                .Include(p => p.Itens)  // Inclui os itens associados ao produto
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (produto == null)
-            {
-                return NotFound();
-            }
-
-            // Desassocia manualmente os itens
-            foreach (var item in produto.Itens)
-            {
-                item.Produto = null;  // Remove a referência ao produto
-            }
-
-            // Agora você pode excluir o produto sem violar a restrição de chave estrangeira
-            _context.Produtos.Remove(produto);
+            var pagamentoComCheque = await _context.PagamentosComCheque.FindAsync(id);
+            _context.PagamentosComCheque.Remove(pagamentoComCheque);
             await _context.SaveChangesAsync();
-
             return RedirectToAction(nameof(Index));
         }
 
-
-        private bool ProdutoExists(int id)
+        private bool PagamentoComChequeExists(int id)
         {
-            return _context.Produtos.Any(e => e.Id == id);
+            return _context.PagamentosComCheque.Any(e => e.Id == id);
         }
     }
 }

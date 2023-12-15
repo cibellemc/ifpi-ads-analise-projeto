@@ -38,6 +38,11 @@ namespace cibelle.Models
                 Itens.Add(item);
             }
         }
+
+        public decimal CalcularValorTotal()
+        {
+            return Itens.Sum(item => item.Preco);
+        }
     }
 }
 
