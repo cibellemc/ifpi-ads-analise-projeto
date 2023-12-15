@@ -30,6 +30,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Transportadora)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoDePagamento)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -66,9 +69,11 @@
                         <span>Nenhum produto associado</span>
                     }
                 </td>
-
                 <td>
                     @Html.DisplayFor(modelItem => item.Transportadora.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoDePagamento.NomeDoCobrado)
                 </td>
                 <td></td>
                 <td>

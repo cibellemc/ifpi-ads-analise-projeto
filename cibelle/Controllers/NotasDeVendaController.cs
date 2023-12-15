@@ -21,6 +21,7 @@ namespace cibelle.Controllers
             // Carregar notas de venda com informações relacionadas
             var notasComRelacionamentos = await _context.NotasDeVenda
                 .Include(n => n.Cliente)
+                .Include(n => n.TipoDePagamento)
                 .Include(n => n.Vendedor)
                 .Include(n => n.Transportadora)
                  .Include(n => n.Itens)
@@ -55,6 +56,7 @@ namespace cibelle.Controllers
             ViewBag.Clientes = new SelectList(_context.Clientes, "Id", "Nome");
             ViewBag.Transportadoras = new SelectList(_context.Transportadoras, "Id", "Nome");
             ViewBag.Produtos = new SelectList(_context.Produtos, "Id", "Nome");
+            ViewBag.TiposDePagamento = new SelectList(_context.TiposDePagamento, "Id", "NomeDoCobrado");
 
             return View();
         }
@@ -62,7 +64,7 @@ namespace cibelle.Controllers
         // POST: NotasDeVenda/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Data,Tipo,IdCliente,IdVendedor,IdTransportadora,IdsItems")] NotaDeVenda notaDeVenda)
+        public async Task<IActionResult> Create([Bind("Id,Data,Tipo,IdCliente,IdVendedor,IdTransportadora,IdsItems,IdTipoPagamento")] NotaDeVenda notaDeVenda)
         {
             if (ModelState.IsValid)
             {
@@ -70,6 +72,7 @@ namespace cibelle.Controllers
                 notaDeVenda.Cliente = await _context.Clientes.FindAsync(notaDeVenda.IdCliente);
                 notaDeVenda.Vendedor = await _context.Vendedores.FindAsync(notaDeVenda.IdVendedor);
                 notaDeVenda.Transportadora = await _context.Transportadoras.FindAsync(notaDeVenda.IdTransportadora);
+                notaDeVenda.TipoDePagamento = await _context.TiposDePagamento.FindAsync(notaDeVenda.IdTipoPagamento);
 
                 // carrega os produtos associados aos IDs fornecidos
                 var produtosSelecionados = await _context.Produtos.Where(p => notaDeVenda.IdsItems.Contains(p.Id)).ToListAsync();
@@ -103,6 +106,8 @@ namespace cibelle.Controllers
 
                 // adiciona o pagamento ao contexto
                 _context.Add(pagamento);
+                notaDeVenda.Pagamentos = new List<Pagamento> { pagamento };
+                
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
@@ -207,7 +212,7 @@ namespace cibelle.Controllers
                 item.Produto.Quantidade++;
                 item.IdNotaDeVenda = 0;
             }
-            
+
             _context.Pagamentos.RemoveRange(notaDeVenda.Pagamentos);
 
             // exclui a nota de venda
